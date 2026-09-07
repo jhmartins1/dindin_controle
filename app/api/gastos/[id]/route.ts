@@ -9,6 +9,16 @@ interface RouteContext {
     }>;
 }
 
+const CATEGORIAS_VALIDAS = [
+    'INGREDIENTES',
+    'EMBALAGENS',
+    'TRANSPORTE',
+    'OUTROS',
+] as const;
+
+type CategoriaGasto =
+    (typeof CATEGORIAS_VALIDAS)[number];
+
 async function verificarSessao() {
     const autenticado =
         await validarSessao();
@@ -42,16 +52,16 @@ export async function GET(
         const { id } =
             await context.params;
 
-        const produtoId =
+        const gastoId =
             Number(id);
 
         if (
-            !Number.isInteger(produtoId) ||
-            produtoId <= 0
+            !Number.isInteger(gastoId) ||
+            gastoId <= 0
         ) {
             return NextResponse.json(
                 {
-                    erro: 'ID do produto inválido.',
+                    erro: 'ID do gasto inválido.',
                 },
                 {
                     status: 400,
@@ -59,17 +69,17 @@ export async function GET(
             );
         }
 
-        const produto =
-            await prisma.produto.findUnique({
+        const gasto =
+            await prisma.gasto.findUnique({
                 where: {
-                    id: produtoId,
+                    id: gastoId,
                 },
             });
 
-        if (!produto) {
+        if (!gasto) {
             return NextResponse.json(
                 {
-                    erro: 'Produto não encontrado.',
+                    erro: 'Gasto não encontrado.',
                 },
                 {
                     status: 404,
@@ -78,11 +88,11 @@ export async function GET(
         }
 
         return NextResponse.json({
-            produto,
+            gasto,
         });
     } catch (error) {
         console.error(
-            'Erro ao buscar produto:',
+            'Erro ao buscar gasto:',
             error,
         );
 
@@ -112,16 +122,16 @@ export async function PUT(
         const { id } =
             await context.params;
 
-        const produtoId =
+        const gastoId =
             Number(id);
 
         if (
-            !Number.isInteger(produtoId) ||
-            produtoId <= 0
+            !Number.isInteger(gastoId) ||
+            gastoId <= 0
         ) {
             return NextResponse.json(
                 {
-                    erro: 'ID do produto inválido.',
+                    erro: 'ID do gasto inválido.',
                 },
                 {
                     status: 400,
@@ -132,22 +142,23 @@ export async function PUT(
         const body =
             await request.json();
 
-        const nome = String(
-            body.nome ?? '',
-        ).trim();
+        const descricao =
+            String(
+                body.descricao ?? '',
+            ).trim();
 
-        const preco = Number(
-            body.preco,
-        );
+        const valor =
+            Number(body.valor);
 
-        const estoque = Number(
-            body.estoque,
-        );
+        const categoria =
+            String(
+                body.categoria ?? '',
+            ) as CategoriaGasto;
 
-        if (!nome) {
+        if (!descricao) {
             return NextResponse.json(
                 {
-                    erro: 'O nome do produto é obrigatório.',
+                    erro: 'Informe a descrição do gasto.',
                 },
                 {
                     status: 400,
@@ -156,12 +167,12 @@ export async function PUT(
         }
 
         if (
-            !Number.isFinite(preco) ||
-            preco <= 0
+            !Number.isFinite(valor) ||
+            valor <= 0
         ) {
             return NextResponse.json(
                 {
-                    erro: 'Informe um preço válido.',
+                    erro: 'Informe um valor válido.',
                 },
                 {
                     status: 400,
@@ -170,12 +181,13 @@ export async function PUT(
         }
 
         if (
-            !Number.isInteger(estoque) ||
-            estoque < 0
+            !CATEGORIAS_VALIDAS.includes(
+                categoria,
+            )
         ) {
             return NextResponse.json(
                 {
-                    erro: 'Informe um estoque válido.',
+                    erro: 'Categoria inválida.',
                 },
                 {
                     status: 400,
@@ -183,17 +195,17 @@ export async function PUT(
             );
         }
 
-        const produtoExistente =
-            await prisma.produto.findUnique({
+        const gastoExistente =
+            await prisma.gasto.findUnique({
                 where: {
-                    id: produtoId,
+                    id: gastoId,
                 },
             });
 
-        if (!produtoExistente) {
+        if (!gastoExistente) {
             return NextResponse.json(
                 {
-                    erro: 'Produto não encontrado.',
+                    erro: 'Gasto não encontrado.',
                 },
                 {
                     status: 404,
@@ -201,26 +213,27 @@ export async function PUT(
             );
         }
 
-        const produto =
-            await prisma.produto.update({
+        const gasto =
+            await prisma.gasto.update({
                 where: {
-                    id: produtoId,
+                    id: gastoId,
                 },
+
                 data: {
-                    nome,
-                    preco,
-                    estoque,
+                    descricao,
+                    valor,
+                    categoria,
                 },
             });
 
         return NextResponse.json({
             mensagem:
-                'Produto atualizado com sucesso.',
-            produto,
+                'Gasto atualizado com sucesso.',
+            gasto,
         });
     } catch (error) {
         console.error(
-            'Erro ao atualizar produto:',
+            'Erro ao atualizar gasto:',
             error,
         );
 
@@ -235,7 +248,7 @@ export async function PUT(
     }
 }
 
-export async function PATCH(
+export async function DELETE(
     request: Request,
     context: RouteContext,
 ) {
@@ -250,16 +263,16 @@ export async function PATCH(
         const { id } =
             await context.params;
 
-        const produtoId =
+        const gastoId =
             Number(id);
 
         if (
-            !Number.isInteger(produtoId) ||
-            produtoId <= 0
+            !Number.isInteger(gastoId) ||
+            gastoId <= 0
         ) {
             return NextResponse.json(
                 {
-                    erro: 'ID do produto inválido.',
+                    erro: 'ID do gasto inválido.',
                 },
                 {
                     status: 400,
@@ -267,79 +280,17 @@ export async function PATCH(
             );
         }
 
-        const body =
-            await request.json();
-
-        if (
-            typeof body.ativo ===
-            'boolean'
-        ) {
-            const produtoExistente =
-                await prisma.produto.findUnique({
-                    where: {
-                        id: produtoId,
-                    },
-                });
-
-            if (!produtoExistente) {
-                return NextResponse.json(
-                    {
-                        erro: 'Produto não encontrado.',
-                    },
-                    {
-                        status: 404,
-                    },
-                );
-            }
-
-            const produto =
-                await prisma.produto.update({
-                    where: {
-                        id: produtoId,
-                    },
-                    data: {
-                        ativo: body.ativo,
-                    },
-                });
-
-            return NextResponse.json({
-                mensagem: body.ativo
-                    ? 'Produto reativado com sucesso.'
-                    : 'Produto desativado com sucesso.',
-                produto,
-            });
-        }
-
-        const quantidade =
-            Number(body.quantidade);
-
-        if (
-            !Number.isInteger(
-                quantidade,
-            ) ||
-            quantidade <= 0
-        ) {
-            return NextResponse.json(
-                {
-                    erro: 'Informe uma quantidade válida.',
-                },
-                {
-                    status: 400,
-                },
-            );
-        }
-
-        const produtoExistente =
-            await prisma.produto.findUnique({
+        const gastoExistente =
+            await prisma.gasto.findUnique({
                 where: {
-                    id: produtoId,
+                    id: gastoId,
                 },
             });
 
-        if (!produtoExistente) {
+        if (!gastoExistente) {
             return NextResponse.json(
                 {
-                    erro: 'Produto não encontrado.',
+                    erro: 'Gasto não encontrado.',
                 },
                 {
                     status: 404,
@@ -347,27 +298,19 @@ export async function PATCH(
             );
         }
 
-        const produto =
-            await prisma.produto.update({
-                where: {
-                    id: produtoId,
-                },
-                data: {
-                    estoque: {
-                        increment:
-                            quantidade,
-                    },
-                },
-            });
+        await prisma.gasto.delete({
+            where: {
+                id: gastoId,
+            },
+        });
 
         return NextResponse.json({
             mensagem:
-                'Estoque atualizado com sucesso.',
-            produto,
+                'Gasto excluído com sucesso.',
         });
     } catch (error) {
         console.error(
-            'Erro ao atualizar produto:',
+            'Erro ao excluir gasto:',
             error,
         );
 

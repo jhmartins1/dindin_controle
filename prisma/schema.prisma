@@ -8,10 +8,9 @@ datasource db {
 }
 
 model Usuario {
-  id    Int    @id @default(autoincrement())
-  login String @unique
-  senha String
-
+  id        Int      @id @default(autoincrement())
+  login     String   @unique
+  senha     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -33,6 +32,9 @@ model Venda {
   id             Int            @id @default(autoincrement())
   total          Decimal        @db.Decimal(10, 2)
   formaPagamento FormaPagamento
+
+  cancelada   Boolean   @default(false)
+  canceladaEm DateTime?
 
   itens ItemVenda[]
 
@@ -58,8 +60,7 @@ model Gasto {
   descricao String
   valor     Decimal        @db.Decimal(10, 2)
   categoria CategoriaGasto
-
-  createdAt DateTime @default(now())
+  createdAt DateTime       @default(now())
 }
 
 enum FormaPagamento {

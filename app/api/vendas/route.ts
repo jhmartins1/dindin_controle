@@ -1,32 +1,58 @@
 import { NextResponse } from 'next/server';
 
+import { validarSessao } from '../../../src/lib/auth';
 import { prisma } from '../../../src/lib/prisma';
 
-type FormaPagamento = 'PIX' | 'DINHEIRO' | 'CARTAO';
+const FORMAS_PAGAMENTO_VALIDAS = [
+    'PIX',
+    'DINHEIRO',
+    'CARTAO',
+] as const;
+
+type FormaPagamento =
+    (typeof FORMAS_PAGAMENTO_VALIDAS)[number];
 
 interface ItemRecebido {
     produtoId: number;
     quantidade: number;
 }
 
-interface BodyVenda {
-    formaPagamento: FormaPagamento;
-    itens: ItemRecebido[];
-}
-
-const FORMAS_PAGAMENTO: FormaPagamento[] = [
-    'PIX',
-    'DINHEIRO',
-    'CARTAO',
-];
-
-export async function POST(request: Request) {
+export async function POST(
+    request: Request,
+) {
     try {
-        const body = (await request.json()) as BodyVenda;
+        const autenticado =
+            await validarSessao();
 
-        const { formaPagamento, itens } = body;
+        if (!autenticado) {
+            return NextResponse.json(
+                {
+                    erro: 'Não autorizado.',
+                },
+                {
+                    status: 401,
+                },
+            );
+        }
 
-        if (!FORMAS_PAGAMENTO.includes(formaPagamento)) {
+        const body =
+            await request.json();
+
+        const formaPagamento =
+            String(
+                body.formaPagamento ?? '',
+            ) as FormaPagamento;
+
+        const itensRecebidos =
+            Array.isArray(body.itens)
+                ? body.itens
+                : [];
+
+        if (
+            !FORMAS_PAGAMENTO_VALIDAS.includes(
+                formaPagamento,
+            )
+        ) {
             return NextResponse.json(
                 {
                     erro: 'Forma de pagamento inválida.',
@@ -37,10 +63,12 @@ export async function POST(request: Request) {
             );
         }
 
-        if (!Array.isArray(itens) || itens.length === 0) {
+        if (
+            itensRecebidos.length === 0
+        ) {
             return NextResponse.json(
                 {
-                    erro: 'Adicione pelo menos um produto à venda.',
+                    erro: 'Selecione pelo menos um produto.',
                 },
                 {
                     status: 400,
@@ -48,40 +76,88 @@ export async function POST(request: Request) {
             );
         }
 
-        for (const item of itens) {
+        const itens: ItemRecebido[] = [];
+
+        for (
+            const item
+            of itensRecebidos
+        ) {
+            const produtoId =
+                Number(
+                    item.produtoId,
+                );
+
+            const quantidade =
+                Number(
+                    item.quantidade,
+                );
+
             if (
-                !Number.isInteger(item.produtoId) ||
-                !Number.isInteger(item.quantidade) ||
-                item.quantidade <= 0
+                !Number.isInteger(
+                    produtoId,
+                ) ||
+                produtoId <= 0
             ) {
                 return NextResponse.json(
                     {
-                        erro: 'Existem itens inválidos na venda.',
+                        erro: 'Produto inválido.',
                     },
                     {
                         status: 400,
                     },
                 );
             }
+
+            if (
+                !Number.isInteger(
+                    quantidade,
+                ) ||
+                quantidade <= 0
+            ) {
+                return NextResponse.json(
+                    {
+                        erro: 'Quantidade inválida.',
+                    },
+                    {
+                        status: 400,
+                    },
+                );
+            }
+
+            itens.push({
+                produtoId,
+                quantidade,
+            });
         }
 
-        const idsProdutos = [
-            ...new Set(itens.map((item) => item.produtoId)),
-        ];
+        const idsProdutos =
+            [
+                ...new Set(
+                    itens.map(
+                        (item) =>
+                            item.produtoId,
+                    ),
+                ),
+            ];
 
-        const produtos = await prisma.produto.findMany({
-            where: {
-                id: {
-                    in: idsProdutos,
+        const produtos =
+            await prisma.produto.findMany({
+                where: {
+                    id: {
+                        in: idsProdutos,
+                    },
+
+                    ativo: true,
                 },
-                ativo: true,
-            },
-        });
+            });
 
-        if (produtos.length !== idsProdutos.length) {
+        if (
+            produtos.length !==
+            idsProdutos.length
+        ) {
             return NextResponse.json(
                 {
-                    erro: 'Um ou mais produtos não foram encontrados.',
+                    erro: 'Um ou mais produtos não foram encontrados ou estão desativados.',
                 },
                 {
                     status: 400,
@@ -89,102 +165,134 @@ export async function POST(request: Request) {
             );
         }
 
-        let total = 0;
-
-        for (const item of itens) {
-            const produto = produtos.find(
-                (produto) => produto.id === item.produtoId,
+        const produtosMap =
+            new Map(
+                produtos.map(
+                    (produto) => [
+                        produto.id,
+                        produto,
+                    ],
+                ),
             );
 
-            if (!produto) {
-                return NextResponse.json(
-                    {
-                        erro: 'Produto não encontrado.',
-                    },
-                    {
-                        status: 400,
-                    },
-                );
-            }
+        const itensNormalizados =
+            itens.map((item) => {
+                const produto =
+                    produtosMap.get(
+                        item.produtoId,
+                    );
 
-            if (produto.estoque < item.quantidade) {
-                return NextResponse.json(
-                    {
-                        erro: `Estoque insuficiente para ${produto.nome}. Disponível: ${produto.estoque}.`,
-                    },
-                    {
-                        status: 400,
-                    },
-                );
-            }
-
-            total += Number(produto.preco) * item.quantidade;
-        }
-
-        const venda = await prisma.$transaction(
-            async (tx) => {
-                // Fazemos uma segunda validação do estoque dentro
-                // da transação antes de descontar.
-                for (const item of itens) {
-                    const produtoAtual = await tx.produto.findUnique({
-                        where: {
-                            id: item.produtoId,
-                        },
-                    });
-
-                    if (
-                        !produtoAtual ||
-                        !produtoAtual.ativo ||
-                        produtoAtual.estoque < item.quantidade
-                    ) {
-                        throw new Error('ESTOQUE_INSUFICIENTE');
-                    }
+                if (!produto) {
+                    throw new Error(
+                        'PRODUTO_NAO_ENCONTRADO',
+                    );
                 }
 
-                const novaVenda = await tx.venda.create({
-                    data: {
-                        total,
-                        formaPagamento,
-                        itens: {
-                            create: itens.map((item) => {
-                                const produto = produtos.find(
-                                    (produto) =>
-                                        produto.id === item.produtoId,
-                                )!;
+                return {
+                    produtoId:
+                        produto.id,
 
-                                return {
-                                    produtoId: item.produtoId,
-                                    quantidade: item.quantidade,
-                                    precoUnitario: produto.preco,
-                                };
-                            }),
-                        },
-                    },
-                    include: {
-                        itens: true,
-                    },
-                });
+                    quantidade:
+                        item.quantidade,
 
-                for (const item of itens) {
-                    await tx.produto.update({
-                        where: {
-                            id: item.produtoId,
-                        },
+                    precoUnitario:
+                        Number(
+                            produto.preco,
+                        ),
+                };
+            });
+
+        const total =
+            itensNormalizados.reduce(
+                (
+                    acumulado,
+                    item,
+                ) =>
+                    acumulado +
+                    item.precoUnitario *
+                    item.quantidade,
+                0,
+            );
+
+        const venda =
+            await prisma.$transaction(
+                async (tx) => {
+                    for (
+                        const item
+                        of itensNormalizados
+                    ) {
+                        const atualizacao =
+                            await tx.produto.updateMany({
+                                where: {
+                                    id:
+                                        item.produtoId,
+
+                                    ativo: true,
+
+                                    estoque: {
+                                        gte:
+                                            item.quantidade,
+                                    },
+                                },
+
+                                data: {
+                                    estoque: {
+                                        decrement:
+                                            item.quantidade,
+                                    },
+                                },
+                            });
+
+                        if (
+                            atualizacao.count !==
+                            1
+                        ) {
+                            throw new Error(
+                                'ESTOQUE_INSUFICIENTE',
+                            );
+                        }
+                    }
+
+                    return tx.venda.create({
                         data: {
-                            estoque: {
-                                decrement: item.quantidade,
+                            total,
+                            formaPagamento,
+
+                            itens: {
+                                create:
+                                    itensNormalizados.map(
+                                        (
+                                            item,
+                                        ) => ({
+                                            produtoId:
+                                                item.produtoId,
+
+                                            quantidade:
+                                                item.quantidade,
+
+                                            precoUnitario:
+                                                item.precoUnitario,
+                                        }),
+                                    ),
+                            },
+                        },
+
+                        include: {
+                            itens: {
+                                include: {
+                                    produto:
+                                        true,
+                                },
                             },
                         },
                     });
-                }
-
-                return novaVenda;
-            },
-        );
+                },
+            );
 
         return NextResponse.json(
             {
-                mensagem: 'Venda registrada com sucesso.',
+                mensagem:
+                    'Venda registrada com sucesso.',
                 venda,
             },
             {
@@ -192,20 +300,41 @@ export async function POST(request: Request) {
             },
         );
     } catch (error) {
-        console.error('Erro ao registrar venda:', error);
+        console.error(
+            'Erro ao registrar venda:',
+            error,
+        );
 
         if (
-            error instanceof Error &&
-            error.message === 'ESTOQUE_INSUFICIENTE'
+            error instanceof Error
         ) {
-            return NextResponse.json(
-                {
-                    erro: 'O estoque de um produto mudou. Verifique as quantidades e tente novamente.',
-                },
-                {
-                    status: 409,
-                },
-            );
+            if (
+                error.message ===
+                'ESTOQUE_INSUFICIENTE'
+            ) {
+                return NextResponse.json(
+                    {
+                        erro: 'Estoque insuficiente para um dos produtos.',
+                    },
+                    {
+                        status: 409,
+                    },
+                );
+            }
+
+            if (
+                error.message ===
+                'PRODUTO_NAO_ENCONTRADO'
+            ) {
+                return NextResponse.json(
+                    {
+                        erro: 'Produto não encontrado.',
+                    },
+                    {
+                        status: 404,
+                    },
+                );
+            }
         }
 
         return NextResponse.json(

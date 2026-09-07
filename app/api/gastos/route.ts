@@ -3,6 +3,16 @@ import { NextResponse } from 'next/server';
 import { validarSessao } from '../../../src/lib/auth';
 import { prisma } from '../../../src/lib/prisma';
 
+const CATEGORIAS_VALIDAS = [
+    'INGREDIENTES',
+    'EMBALAGENS',
+    'TRANSPORTE',
+    'OUTROS',
+] as const;
+
+type Categoria =
+    (typeof CATEGORIAS_VALIDAS)[number];
+
 export async function POST(
     request: Request,
 ) {
@@ -24,22 +34,23 @@ export async function POST(
         const body =
             await request.json();
 
-        const nome = String(
-            body.nome ?? '',
-        ).trim();
+        const descricao =
+            String(
+                body.descricao ?? '',
+            ).trim();
 
-        const preco = Number(
-            body.preco,
-        );
+        const valor =
+            Number(body.valor);
 
-        const estoque = Number(
-            body.estoque,
-        );
+        const categoria =
+            String(
+                body.categoria ?? '',
+            ) as Categoria;
 
-        if (!nome) {
+        if (!descricao) {
             return NextResponse.json(
                 {
-                    erro: 'O nome do produto é obrigatório.',
+                    erro: 'Informe a descrição do gasto.',
                 },
                 {
                     status: 400,
@@ -48,12 +59,12 @@ export async function POST(
         }
 
         if (
-            !Number.isFinite(preco) ||
-            preco <= 0
+            !Number.isFinite(valor) ||
+            valor <= 0
         ) {
             return NextResponse.json(
                 {
-                    erro: 'Informe um preço válido.',
+                    erro: 'Informe um valor válido.',
                 },
                 {
                     status: 400,
@@ -62,12 +73,13 @@ export async function POST(
         }
 
         if (
-            !Number.isInteger(estoque) ||
-            estoque < 0
+            !CATEGORIAS_VALIDAS.includes(
+                categoria,
+            )
         ) {
             return NextResponse.json(
                 {
-                    erro: 'Informe um estoque válido.',
+                    erro: 'Categoria inválida.',
                 },
                 {
                     status: 400,
@@ -75,20 +87,20 @@ export async function POST(
             );
         }
 
-        const produto =
-            await prisma.produto.create({
+        const gasto =
+            await prisma.gasto.create({
                 data: {
-                    nome,
-                    preco,
-                    estoque,
+                    descricao,
+                    valor,
+                    categoria,
                 },
             });
 
         return NextResponse.json(
             {
                 mensagem:
-                    'Produto cadastrado com sucesso.',
-                produto,
+                    'Gasto registrado com sucesso.',
+                gasto,
             },
             {
                 status: 201,
@@ -96,7 +108,7 @@ export async function POST(
         );
     } catch (error) {
         console.error(
-            'Erro ao cadastrar produto:',
+            'Erro ao registrar gasto:',
             error,
         );
 

@@ -102,6 +102,8 @@ export const VendaScalarFieldEnum = {
   id: 'id',
   total: 'total',
   formaPagamento: 'formaPagamento',
+  cancelada: 'cancelada',
+  canceladaEm: 'canceladaEm',
   createdAt: 'createdAt'
 } as const
 
@@ -145,4 +147,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

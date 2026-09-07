@@ -1,8 +1,11 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import type { ReactNode } from 'react';
+
+import { DashboardNav } from './DashboardNav';
 
 interface DashboardLayoutProps {
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 export default async function DashboardLayout({
@@ -11,7 +14,6 @@ export default async function DashboardLayout({
     const cookieStore = await cookies();
 
     const session = cookieStore.get('dindin_session');
-
     const sessionToken = process.env.SESSION_TOKEN;
 
     if (!sessionToken) {
@@ -22,5 +24,11 @@ export default async function DashboardLayout({
         redirect('/login');
     }
 
-    return <>{children}</>;
+    return (
+        <>
+            <DashboardNav />
+
+            {children}
+        </>
+    );
 }

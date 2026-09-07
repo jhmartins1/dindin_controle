@@ -40,6 +40,8 @@ export type VendaMinAggregateOutputType = {
   id: number | null
   total: runtime.Decimal | null
   formaPagamento: $Enums.FormaPagamento | null
+  cancelada: boolean | null
+  canceladaEm: Date | null
   createdAt: Date | null
 }
 
@@ -47,6 +49,8 @@ export type VendaMaxAggregateOutputType = {
   id: number | null
   total: runtime.Decimal | null
   formaPagamento: $Enums.FormaPagamento | null
+  cancelada: boolean | null
+  canceladaEm: Date | null
   createdAt: Date | null
 }
 
@@ -54,6 +58,8 @@ export type VendaCountAggregateOutputType = {
   id: number
   total: number
   formaPagamento: number
+  cancelada: number
+  canceladaEm: number
   createdAt: number
   _all: number
 }
@@ -73,6 +79,8 @@ export type VendaMinAggregateInputType = {
   id?: true
   total?: true
   formaPagamento?: true
+  cancelada?: true
+  canceladaEm?: true
   createdAt?: true
 }
 
@@ -80,6 +88,8 @@ export type VendaMaxAggregateInputType = {
   id?: true
   total?: true
   formaPagamento?: true
+  cancelada?: true
+  canceladaEm?: true
   createdAt?: true
 }
 
@@ -87,6 +97,8 @@ export type VendaCountAggregateInputType = {
   id?: true
   total?: true
   formaPagamento?: true
+  cancelada?: true
+  canceladaEm?: true
   createdAt?: true
   _all?: true
 }
@@ -181,6 +193,8 @@ export type VendaGroupByOutputType = {
   id: number
   total: runtime.Decimal
   formaPagamento: $Enums.FormaPagamento
+  cancelada: boolean
+  canceladaEm: Date | null
   createdAt: Date
   _count: VendaCountAggregateOutputType | null
   _avg: VendaAvgAggregateOutputType | null
@@ -211,6 +225,8 @@ export type VendaWhereInput = {
   id?: Prisma.IntFilter<"Venda"> | number
   total?: Prisma.DecimalFilter<"Venda"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFilter<"Venda"> | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFilter<"Venda"> | boolean
+  canceladaEm?: Prisma.DateTimeNullableFilter<"Venda"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Venda"> | Date | string
   itens?: Prisma.ItemVendaListRelationFilter
 }
@@ -219,6 +235,8 @@ export type VendaOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   total?: Prisma.SortOrder
   formaPagamento?: Prisma.SortOrder
+  cancelada?: Prisma.SortOrder
+  canceladaEm?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   itens?: Prisma.ItemVendaOrderByRelationAggregateInput
 }
@@ -230,6 +248,8 @@ export type VendaWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.VendaWhereInput | Prisma.VendaWhereInput[]
   total?: Prisma.DecimalFilter<"Venda"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFilter<"Venda"> | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFilter<"Venda"> | boolean
+  canceladaEm?: Prisma.DateTimeNullableFilter<"Venda"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Venda"> | Date | string
   itens?: Prisma.ItemVendaListRelationFilter
 }, "id">
@@ -238,6 +258,8 @@ export type VendaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   total?: Prisma.SortOrder
   formaPagamento?: Prisma.SortOrder
+  cancelada?: Prisma.SortOrder
+  canceladaEm?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.VendaCountOrderByAggregateInput
   _avg?: Prisma.VendaAvgOrderByAggregateInput
@@ -253,12 +275,16 @@ export type VendaScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Venda"> | number
   total?: Prisma.DecimalWithAggregatesFilter<"Venda"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoWithAggregatesFilter<"Venda"> | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolWithAggregatesFilter<"Venda"> | boolean
+  canceladaEm?: Prisma.DateTimeNullableWithAggregatesFilter<"Venda"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Venda"> | Date | string
 }
 
 export type VendaCreateInput = {
   total: runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento: $Enums.FormaPagamento
+  cancelada?: boolean
+  canceladaEm?: Date | string | null
   createdAt?: Date | string
   itens?: Prisma.ItemVendaCreateNestedManyWithoutVendaInput
 }
@@ -267,6 +293,8 @@ export type VendaUncheckedCreateInput = {
   id?: number
   total: runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento: $Enums.FormaPagamento
+  cancelada?: boolean
+  canceladaEm?: Date | string | null
   createdAt?: Date | string
   itens?: Prisma.ItemVendaUncheckedCreateNestedManyWithoutVendaInput
 }
@@ -274,6 +302,8 @@ export type VendaUncheckedCreateInput = {
 export type VendaUpdateInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFieldUpdateOperationsInput | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canceladaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   itens?: Prisma.ItemVendaUpdateManyWithoutVendaNestedInput
 }
@@ -282,6 +312,8 @@ export type VendaUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFieldUpdateOperationsInput | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canceladaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   itens?: Prisma.ItemVendaUncheckedUpdateManyWithoutVendaNestedInput
 }
@@ -290,12 +322,16 @@ export type VendaCreateManyInput = {
   id?: number
   total: runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento: $Enums.FormaPagamento
+  cancelada?: boolean
+  canceladaEm?: Date | string | null
   createdAt?: Date | string
 }
 
 export type VendaUpdateManyMutationInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFieldUpdateOperationsInput | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canceladaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -303,6 +339,8 @@ export type VendaUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFieldUpdateOperationsInput | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canceladaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -310,6 +348,8 @@ export type VendaCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   total?: Prisma.SortOrder
   formaPagamento?: Prisma.SortOrder
+  cancelada?: Prisma.SortOrder
+  canceladaEm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -322,6 +362,8 @@ export type VendaMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   total?: Prisma.SortOrder
   formaPagamento?: Prisma.SortOrder
+  cancelada?: Prisma.SortOrder
+  canceladaEm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -329,6 +371,8 @@ export type VendaMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   total?: Prisma.SortOrder
   formaPagamento?: Prisma.SortOrder
+  cancelada?: Prisma.SortOrder
+  canceladaEm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -344,6 +388,10 @@ export type VendaScalarRelationFilter = {
 
 export type EnumFormaPagamentoFieldUpdateOperationsInput = {
   set?: $Enums.FormaPagamento
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type VendaCreateNestedOneWithoutItensInput = {
@@ -363,6 +411,8 @@ export type VendaUpdateOneRequiredWithoutItensNestedInput = {
 export type VendaCreateWithoutItensInput = {
   total: runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento: $Enums.FormaPagamento
+  cancelada?: boolean
+  canceladaEm?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -370,6 +420,8 @@ export type VendaUncheckedCreateWithoutItensInput = {
   id?: number
   total: runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento: $Enums.FormaPagamento
+  cancelada?: boolean
+  canceladaEm?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -392,6 +444,8 @@ export type VendaUpdateToOneWithWhereWithoutItensInput = {
 export type VendaUpdateWithoutItensInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFieldUpdateOperationsInput | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canceladaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -399,6 +453,8 @@ export type VendaUncheckedUpdateWithoutItensInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   formaPagamento?: Prisma.EnumFormaPagamentoFieldUpdateOperationsInput | $Enums.FormaPagamento
+  cancelada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canceladaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -437,6 +493,8 @@ export type VendaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   total?: boolean
   formaPagamento?: boolean
+  cancelada?: boolean
+  canceladaEm?: boolean
   createdAt?: boolean
   itens?: boolean | Prisma.Venda$itensArgs<ExtArgs>
   _count?: boolean | Prisma.VendaCountOutputTypeDefaultArgs<ExtArgs>
@@ -446,6 +504,8 @@ export type VendaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   total?: boolean
   formaPagamento?: boolean
+  cancelada?: boolean
+  canceladaEm?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["venda"]>
 
@@ -453,6 +513,8 @@ export type VendaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   total?: boolean
   formaPagamento?: boolean
+  cancelada?: boolean
+  canceladaEm?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["venda"]>
 
@@ -460,10 +522,12 @@ export type VendaSelectScalar = {
   id?: boolean
   total?: boolean
   formaPagamento?: boolean
+  cancelada?: boolean
+  canceladaEm?: boolean
   createdAt?: boolean
 }
 
-export type VendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "total" | "formaPagamento" | "createdAt", ExtArgs["result"]["venda"]>
+export type VendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "total" | "formaPagamento" | "cancelada" | "canceladaEm" | "createdAt", ExtArgs["result"]["venda"]>
 export type VendaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   itens?: boolean | Prisma.Venda$itensArgs<ExtArgs>
   _count?: boolean | Prisma.VendaCountOutputTypeDefaultArgs<ExtArgs>
@@ -480,6 +544,8 @@ export type $VendaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: number
     total: runtime.Decimal
     formaPagamento: $Enums.FormaPagamento
+    cancelada: boolean
+    canceladaEm: Date | null
     createdAt: Date
   }, ExtArgs["result"]["venda"]>
   composites: {}
@@ -908,6 +974,8 @@ export interface VendaFieldRefs {
   readonly id: Prisma.FieldRef<"Venda", 'Int'>
   readonly total: Prisma.FieldRef<"Venda", 'Decimal'>
   readonly formaPagamento: Prisma.FieldRef<"Venda", 'FormaPagamento'>
+  readonly cancelada: Prisma.FieldRef<"Venda", 'Boolean'>
+  readonly canceladaEm: Prisma.FieldRef<"Venda", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Venda", 'DateTime'>
 }
     
