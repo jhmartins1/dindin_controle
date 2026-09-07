@@ -1,10 +1,15 @@
 'use client';
 
-import { LogOut } from 'lucide-react';
+import {
+    LoaderCircle,
+    LogOut,
+} from 'lucide-react';
+
 import { useState } from 'react';
 
 export function LogoutButton() {
-    const [saindo, setSaindo] = useState(false);
+    const [saindo, setSaindo] =
+        useState(false);
 
     async function handleLogout() {
         try {
@@ -14,9 +19,13 @@ export function LogoutButton() {
                 method: 'POST',
             });
 
-            window.location.href = '/login';
+            window.location.href =
+                '/login';
         } catch (error) {
-            console.error('Erro ao sair:', error);
+            console.error(
+                'Erro ao sair:',
+                error,
+            );
         } finally {
             setSaindo(false);
         }
@@ -27,11 +36,22 @@ export function LogoutButton() {
             type="button"
             onClick={handleLogout}
             disabled={saindo}
-            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-50"
+            className="flex shrink-0 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-zinc-600 shadow-sm transition hover:border-red-100 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
         >
-            <LogOut size={18} />
+            {saindo ? (
+                <LoaderCircle
+                    size={18}
+                    className="animate-spin"
+                />
+            ) : (
+                <LogOut size={18} />
+            )}
 
-            {saindo ? 'Saindo...' : 'Sair'}
+            <span className="hidden sm:inline">
+                {saindo
+                    ? 'Saindo...'
+                    : 'Sair'}
+            </span>
         </button>
     );
 }

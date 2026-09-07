@@ -16,10 +16,13 @@ interface CancelarVendaButtonProps {
 export function CancelarVendaButton({
     vendaId,
 }: CancelarVendaButtonProps) {
-    const router = useRouter();
+    const router =
+        useRouter();
 
-    const [cancelando, setCancelando] =
-        useState(false);
+    const [
+        cancelando,
+        setCancelando,
+    ] = useState(false);
 
     const [erro, setErro] =
         useState('');
@@ -38,12 +41,13 @@ export function CancelarVendaButton({
             setErro('');
             setCancelando(true);
 
-            const response = await fetch(
-                `/api/vendas/${vendaId}/cancelar`,
-                {
-                    method: 'POST',
-                },
-            );
+            const response =
+                await fetch(
+                    `/api/vendas/${vendaId}/cancelar`,
+                    {
+                        method: 'POST',
+                    },
+                );
 
             const data =
                 await response.json();
@@ -68,12 +72,16 @@ export function CancelarVendaButton({
     }
 
     return (
-        <div>
+        <div className="flex flex-col items-end">
             <button
                 type="button"
-                onClick={cancelarVenda}
-                disabled={cancelando}
-                className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={
+                    cancelarVenda
+                }
+                disabled={
+                    cancelando
+                }
+                className="flex items-center gap-2 rounded-xl border border-red-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {cancelando ? (
                     <LoaderCircle
@@ -81,7 +89,9 @@ export function CancelarVendaButton({
                         className="animate-spin"
                     />
                 ) : (
-                    <Ban size={16} />
+                    <Ban
+                        size={16}
+                    />
                 )}
 
                 {cancelando
@@ -90,7 +100,7 @@ export function CancelarVendaButton({
             </button>
 
             {erro && (
-                <p className="mt-2 text-sm text-red-600">
+                <p className="mt-2 max-w-xs text-right text-xs font-medium text-red-600">
                     {erro}
                 </p>
             )}

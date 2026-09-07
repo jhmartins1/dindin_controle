@@ -1,5 +1,9 @@
 import {
+    AlertTriangle,
+    Boxes,
+    CircleOff,
     Package,
+    PackageCheck,
     PackagePlus,
     Pencil,
 } from 'lucide-react';
@@ -34,7 +38,8 @@ export default async function ProdutosPage() {
 
     const produtosAtivos =
         produtos.filter(
-            (produto) => produto.ativo,
+            (produto) =>
+                produto.ativo,
         );
 
     const produtosDesativados =
@@ -51,81 +56,177 @@ export default async function ProdutosPage() {
             0,
         );
 
+    const estoqueBaixo =
+        produtosAtivos.filter(
+            (produto) =>
+                produto.estoque <= 5,
+        );
+
+    const semEstoque =
+        produtosAtivos.filter(
+            (produto) =>
+                produto.estoque === 0,
+        );
+
     return (
-        <main className="min-h-screen bg-zinc-100">
-            <div className="mx-auto max-w-7xl p-6">
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <main className="min-h-screen">
+            <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-8">
+                <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-zinc-900">
+                        <p className="mb-1 text-sm font-semibold text-pink-600">
+                            Catálogo e estoque
+                        </p>
+
+                        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
                             Produtos
                         </h1>
 
-                        <p className="mt-1 text-zinc-500">
-                            Controle dos sabores e estoque
+                        <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-500">
+                            Gerencie os sabores,
+                            preços e estoque dos
+                            produtos disponíveis
+                            para venda.
                         </p>
                     </div>
 
                     <Link
                         href="/dashboard/produtos/novo"
-                        className="flex items-center justify-center gap-2 rounded-xl bg-pink-600 px-4 py-3 font-semibold text-white transition hover:bg-pink-700"
+                        className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-5 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
                     >
-                        <PackagePlus size={18} />
+                        <PackagePlus
+                            size={19}
+                        />
 
                         Novo produto
                     </Link>
                 </div>
 
-                <div className="mb-8 grid gap-4 sm:grid-cols-3">
+                <section className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <CardResumo
                         titulo="Produtos ativos"
                         valor={`${produtosAtivos.length}`}
-                    />
-
-                    <CardResumo
-                        titulo="Desativados"
-                        valor={`${produtosDesativados.length}`}
+                        descricao="Disponíveis para venda"
+                        icone={
+                            <PackageCheck
+                                size={22}
+                            />
+                        }
+                        destaque="verde"
                     />
 
                     <CardResumo
                         titulo="Estoque total"
                         valor={`${estoqueTotal}`}
-                        complemento="unidades"
+                        descricao="Unidades disponíveis"
+                        icone={
+                            <Boxes
+                                size={22}
+                            />
+                        }
+                        destaque="azul"
                     />
-                </div>
+
+                    <CardResumo
+                        titulo="Estoque baixo"
+                        valor={`${estoqueBaixo.length}`}
+                        descricao="5 unidades ou menos"
+                        icone={
+                            <AlertTriangle
+                                size={22}
+                            />
+                        }
+                        destaque={
+                            estoqueBaixo.length >
+                                0
+                                ? 'amarelo'
+                                : 'verde'
+                        }
+                    />
+
+                    <CardResumo
+                        titulo="Desativados"
+                        valor={`${produtosDesativados.length}`}
+                        descricao="Fora da tela de vendas"
+                        icone={
+                            <CircleOff
+                                size={22}
+                            />
+                        }
+                        destaque="cinza"
+                    />
+                </section>
+
+                {semEstoque.length >
+                    0 && (
+                        <section className="mb-7 rounded-3xl border border-red-200/80 bg-gradient-to-r from-red-50 to-rose-50 p-5 shadow-sm">
+                            <div className="flex items-start gap-4">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-600">
+                                    <AlertTriangle
+                                        size={22}
+                                    />
+                                </div>
+
+                                <div>
+                                    <h2 className="font-bold text-red-950">
+                                        Produtos sem
+                                        estoque
+                                    </h2>
+
+                                    <p className="mt-1 text-sm text-red-700">
+                                        Esses produtos não
+                                        poderão ser vendidos
+                                        até o estoque ser
+                                        reposto.
+                                    </p>
+
+                                    <div className="mt-4 flex flex-wrap gap-2">
+                                        {semEstoque.map(
+                                            (
+                                                produto,
+                                            ) => (
+                                                <span
+                                                    key={
+                                                        produto.id
+                                                    }
+                                                    className="rounded-xl border border-red-100 bg-white px-3 py-2 text-sm font-semibold text-red-700"
+                                                >
+                                                    {
+                                                        produto.nome
+                                                    }
+                                                </span>
+                                            ),
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    )}
 
                 <section>
-                    <div className="mb-4">
-                        <h2 className="text-lg font-bold text-zinc-900">
-                            Produtos ativos
-                        </h2>
+                    <CabecalhoSecao
+                        titulo="Produtos ativos"
+                        descricao="Sabores disponíveis para venda"
+                        quantidade={
+                            produtosAtivos.length
+                        }
+                    />
 
-                        <p className="text-sm text-zinc-500">
-                            Sabores disponíveis para venda
-                        </p>
-                    </div>
-
-                    {produtosAtivos.length === 0 ? (
-                        <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
-                            <Package
-                                size={40}
-                                className="mx-auto mb-3 text-zinc-300"
-                            />
-
-                            <h2 className="font-semibold text-zinc-900">
-                                Nenhum produto ativo
-                            </h2>
-
-                            <p className="mt-1 text-sm text-zinc-500">
-                                Cadastre ou reative um produto.
-                            </p>
-                        </div>
+                    {produtosAtivos.length ===
+                        0 ? (
+                        <EstadoVazio />
                     ) : (
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             {produtosAtivos.map(
-                                (produto) => (
+                                (
+                                    produto,
+                                ) => (
                                     <ProdutoCard
-                                        key={produto.id}
-                                        produto={produto}
+                                        key={
+                                            produto.id
+                                        }
+                                        produto={
+                                            produto
+                                        }
                                     />
                                 ),
                             )}
@@ -136,22 +237,26 @@ export default async function ProdutosPage() {
                 {produtosDesativados.length >
                     0 && (
                         <section className="mt-10">
-                            <div className="mb-4">
-                                <h2 className="text-lg font-bold text-zinc-900">
-                                    Produtos desativados
-                                </h2>
+                            <CabecalhoSecao
+                                titulo="Produtos desativados"
+                                descricao="Não aparecem na tela de vendas"
+                                quantidade={
+                                    produtosDesativados.length
+                                }
+                            />
 
-                                <p className="text-sm text-zinc-500">
-                                    Não aparecem na tela de vendas
-                                </p>
-                            </div>
-
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                                 {produtosDesativados.map(
-                                    (produto) => (
+                                    (
+                                        produto,
+                                    ) => (
                                         <ProdutoCard
-                                            key={produto.id}
-                                            produto={produto}
+                                            key={
+                                                produto.id
+                                            }
+                                            produto={
+                                                produto
+                                            }
                                         />
                                     ),
                                 )}
@@ -170,28 +275,75 @@ interface ProdutoCardProps {
 function ProdutoCard({
     produto,
 }: ProdutoCardProps) {
+    const estoqueBaixo =
+        produto.ativo &&
+        produto.estoque <= 5;
+
+    const semEstoque =
+        produto.ativo &&
+        produto.estoque === 0;
+
+    const status =
+        semEstoque
+            ? {
+                texto:
+                    'Sem estoque',
+                classe:
+                    'bg-red-50 text-red-600',
+                ponto:
+                    'bg-red-500',
+            }
+            : estoqueBaixo
+                ? {
+                    texto:
+                        'Estoque baixo',
+                    classe:
+                        'bg-amber-50 text-amber-700',
+                    ponto:
+                        'bg-amber-400',
+                }
+                : {
+                    texto:
+                        'Disponível',
+                    classe:
+                        'bg-emerald-50 text-emerald-700',
+                    ponto:
+                        'bg-emerald-500',
+                };
+
     return (
-        <div
-            className={`rounded-2xl bg-white p-5 shadow-sm ${!produto.ativo
-                    ? 'opacity-75'
-                    : ''
+        <article
+            className={`group relative overflow-hidden rounded-3xl border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${produto.ativo
+                    ? 'border-zinc-200/70'
+                    : 'border-zinc-200 opacity-70'
                 }`}
         >
+            <div
+                className={`absolute inset-x-0 top-0 h-1 ${produto.ativo
+                        ? semEstoque
+                            ? 'bg-red-500'
+                            : estoqueBaixo
+                                ? 'bg-amber-400'
+                                : 'bg-emerald-500'
+                        : 'bg-zinc-300'
+                    }`}
+            />
+
             <div className="flex items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-lg font-semibold text-zinc-900">
+                        <h2 className="truncate text-lg font-bold text-zinc-900">
                             {produto.nome}
                         </h2>
 
                         {!produto.ativo && (
-                            <span className="rounded-lg bg-zinc-100 px-2 py-1 text-xs font-semibold text-zinc-600">
+                            <span className="rounded-lg bg-zinc-100 px-2.5 py-1 text-[11px] font-bold text-zinc-500">
                                 Desativado
                             </span>
                         )}
                     </div>
 
-                    <p className="mt-1 text-sm text-zinc-500">
+                    <p className="mt-1 text-sm font-medium text-zinc-500">
                         {formatarMoeda(
                             Number(
                                 produto.preco,
@@ -203,80 +355,209 @@ function ProdutoCard({
                 <Link
                     href={`/dashboard/produtos/${produto.id}/editar`}
                     title="Editar produto"
-                    className="rounded-lg p-2 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 shadow-sm transition hover:border-pink-200 hover:bg-pink-50 hover:text-pink-600"
                 >
-                    <Pencil size={18} />
+                    <Pencil size={16} />
                 </Link>
             </div>
 
-            <div className="mt-6 border-t border-zinc-100 pt-4">
-                <p className="text-sm text-zinc-500">
-                    Estoque
-                </p>
+            <div className="my-5 h-px bg-zinc-100" />
 
-                <div className="mt-1 flex items-center justify-between gap-3">
-                    <p className="text-2xl font-bold text-zinc-900">
-                        {produto.estoque}
-
-                        <span className="ml-1 text-sm font-normal text-zinc-500">
-                            unidades
-                        </span>
+            <div>
+                <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-medium text-zinc-500">
+                        Estoque atual
                     </p>
 
-                    {produto.ativo &&
-                        produto.estoque <= 5 && (
-                            <span className="rounded-lg bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600">
-                                Estoque baixo
-                            </span>
-                        )}
+                    {produto.ativo && (
+                        <span
+                            className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold ${status.classe}`}
+                        >
+                            <span
+                                className={`h-1.5 w-1.5 rounded-full ${status.ponto}`}
+                            />
+
+                            {
+                                status.texto
+                            }
+                        </span>
+                    )}
+                </div>
+
+                <div className="mt-2 flex items-baseline gap-1.5">
+                    <p
+                        className={`text-3xl font-bold tracking-tight ${semEstoque
+                                ? 'text-red-600'
+                                : 'text-zinc-900'
+                            }`}
+                    >
+                        {produto.estoque}
+                    </p>
+
+                    <span className="text-sm text-zinc-400">
+                        unidades
+                    </span>
                 </div>
             </div>
 
-            {produto.ativo && (
-                <AdicionarEstoque
-                    produtoId={produto.id}
-                    produtoNome={produto.nome}
-                    estoqueAtual={produto.estoque}
-                />
-            )}
+            <div className="mt-5 space-y-2">
+                {produto.ativo && (
+                    <AdicionarEstoque
+                        produtoId={
+                            produto.id
+                        }
+                        produtoNome={
+                            produto.nome
+                        }
+                        estoqueAtual={
+                            produto.estoque
+                        }
+                    />
+                )}
 
-            <StatusProdutoButton
-                produtoId={produto.id}
-                produtoNome={produto.nome}
-                ativo={produto.ativo}
-            />
+                <StatusProdutoButton
+                    produtoId={
+                        produto.id
+                    }
+                    produtoNome={
+                        produto.nome
+                    }
+                    ativo={
+                        produto.ativo
+                    }
+                />
+            </div>
+        </article>
+    );
+}
+
+interface CabecalhoSecaoProps {
+    titulo: string;
+    descricao: string;
+    quantidade: number;
+}
+
+function CabecalhoSecao({
+    titulo,
+    descricao,
+    quantidade,
+}: CabecalhoSecaoProps) {
+    return (
+        <div className="flex items-center justify-between gap-4">
+            <div>
+                <h2 className="text-lg font-bold text-zinc-900">
+                    {titulo}
+                </h2>
+
+                <p className="mt-1 text-sm text-zinc-500">
+                    {descricao}
+                </p>
+            </div>
+
+            <span className="rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-sm font-bold text-zinc-600 shadow-sm">
+                {quantidade}
+            </span>
         </div>
     );
 }
 
+type Destaque =
+    | 'verde'
+    | 'azul'
+    | 'amarelo'
+    | 'cinza';
+
 interface CardResumoProps {
     titulo: string;
     valor: string;
-    complemento?: string;
+    descricao: string;
+    icone: React.ReactNode;
+    destaque: Destaque;
 }
 
 function CardResumo({
     titulo,
     valor,
-    complemento,
+    descricao,
+    icone,
+    destaque,
 }: CardResumoProps) {
+    const estilos = {
+        verde: {
+            detalhe:
+                'bg-emerald-500',
+            icone:
+                'bg-emerald-50 text-emerald-600',
+        },
+
+        azul: {
+            detalhe:
+                'bg-sky-500',
+            icone:
+                'bg-sky-50 text-sky-600',
+        },
+
+        amarelo: {
+            detalhe:
+                'bg-amber-400',
+            icone:
+                'bg-amber-50 text-amber-600',
+        },
+
+        cinza: {
+            detalhe:
+                'bg-zinc-300',
+            icone:
+                'bg-zinc-100 text-zinc-500',
+        },
+    };
+
     return (
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
-            <p className="text-sm text-zinc-500">
-                {titulo}
-            </p>
+        <div className="relative overflow-hidden rounded-3xl border border-zinc-200/70 bg-white p-5 shadow-sm">
+            <div
+                className={`absolute inset-x-0 top-0 h-1 ${estilos[destaque].detalhe}`}
+            />
 
-            <div className="mt-1 flex items-baseline gap-1">
-                <p className="text-2xl font-bold text-zinc-900">
-                    {valor}
-                </p>
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <p className="text-sm font-medium text-zinc-500">
+                        {titulo}
+                    </p>
 
-                {complemento && (
-                    <span className="text-sm text-zinc-500">
-                        {complemento}
-                    </span>
-                )}
+                    <p className="mt-2 text-2xl font-bold text-zinc-900">
+                        {valor}
+                    </p>
+
+                    <p className="mt-1 text-xs text-zinc-400">
+                        {descricao}
+                    </p>
+                </div>
+
+                <div
+                    className={`flex h-11 w-11 items-center justify-center rounded-2xl ${estilos[destaque].icone}`}
+                >
+                    {icone}
+                </div>
             </div>
+        </div>
+    );
+}
+
+function EstadoVazio() {
+    return (
+        <div className="mt-5 rounded-3xl border border-zinc-200/70 bg-white p-12 text-center shadow-sm">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-50 text-pink-300">
+                <Package size={30} />
+            </div>
+
+            <h2 className="mt-4 font-bold text-zinc-900">
+                Nenhum produto ativo
+            </h2>
+
+            <p className="mt-1 text-sm text-zinc-500">
+                Cadastre ou reative um
+                produto para começar.
+            </p>
         </div>
     );
 }

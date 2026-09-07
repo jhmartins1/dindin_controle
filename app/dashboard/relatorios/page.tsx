@@ -1,5 +1,6 @@
 import {
     BarChart3,
+    CalendarDays,
     DollarSign,
     Package,
     ReceiptText,
@@ -9,6 +10,10 @@ import {
 } from 'lucide-react';
 
 import Link from 'next/link';
+
+import type {
+    ReactNode,
+} from 'react';
 
 import { prisma } from '../../../src/lib/prisma';
 
@@ -37,14 +42,21 @@ const PERIODOS = [
     },
 ];
 
-function formatarMoeda(valor: number) {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    }).format(valor);
+function formatarMoeda(
+    valor: number,
+) {
+    return new Intl.NumberFormat(
+        'pt-BR',
+        {
+            style: 'currency',
+            currency: 'BRL',
+        },
+    ).format(valor);
 }
 
-function formatarNumero(valor: number) {
+function formatarNumero(
+    valor: number,
+) {
     return new Intl.NumberFormat(
         'pt-BR',
     ).format(valor);
@@ -53,15 +65,32 @@ function formatarNumero(valor: number) {
 function calcularDataInicio(
     dias: number,
 ) {
-    const data = new Date();
+    const agora =
+        new Date();
 
-    data.setDate(
-        data.getDate() - (dias - 1),
+    const dataBrasilia =
+        new Intl.DateTimeFormat(
+            'en-CA',
+            {
+                timeZone:
+                    'America/Sao_Paulo',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            },
+        ).format(agora);
+
+    const hoje =
+        new Date(
+            `${dataBrasilia}T00:00:00-03:00`,
+        );
+
+    hoje.setDate(
+        hoje.getDate() -
+        (dias - 1),
     );
 
-    data.setHours(0, 0, 0, 0);
-
-    return data;
+    return hoje;
 }
 
 export default async function RelatoriosPage({
@@ -93,7 +122,8 @@ export default async function RelatoriosPage({
         await Promise.all([
             prisma.venda.findMany({
                 where: {
-                    cancelada: false,
+                    cancelada:
+                        false,
 
                     createdAt: {
                         gte: inicio,
@@ -103,13 +133,10 @@ export default async function RelatoriosPage({
                 include: {
                     itens: {
                         include: {
-                            produto: true,
+                            produto:
+                                true,
                         },
                     },
-                },
-
-                orderBy: {
-                    createdAt: 'desc',
                 },
             }),
 
@@ -118,10 +145,6 @@ export default async function RelatoriosPage({
                     createdAt: {
                         gte: inicio,
                     },
-                },
-
-                orderBy: {
-                    createdAt: 'desc',
                 },
             }),
         ]);
@@ -171,6 +194,13 @@ export default async function RelatoriosPage({
             quantidadeVendas
             : 0;
 
+    const margem =
+        faturamento > 0
+            ? (resultado /
+                faturamento) *
+            100
+            : 0;
+
     const produtosMap =
         new Map<
             number,
@@ -205,7 +235,8 @@ export default async function RelatoriosPage({
                     item.produtoId,
                     {
                         nome:
-                            item.produto
+                            item
+                                .produto
                                 .nome,
 
                         quantidade:
@@ -237,32 +268,36 @@ export default async function RelatoriosPage({
                 a.faturamento,
         );
 
+    const maiorQuantidade =
+        produtosMaisVendidos[0]
+            ?.quantidade ?? 1;
+
+    const maiorFaturamento =
+        produtosMaiorFaturamento[0]
+            ?.faturamento ?? 1;
+
     return (
-        <main className="min-h-screen bg-zinc-100">
-            <div className="mx-auto max-w-7xl p-6">
-                <div className="mb-8">
-                    <div className="flex items-center gap-3">
-                        <div className="rounded-xl bg-pink-50 p-3 text-pink-600">
-                            <BarChart3
-                                size={24}
-                            />
-                        </div>
+        <main className="min-h-screen">
+            <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-8">
+                <div className="mb-7">
+                    <p className="mb-1 text-sm font-semibold text-pink-600">
+                        Análises
+                    </p>
 
-                        <div>
-                            <h1 className="text-2xl font-bold text-zinc-900">
-                                Relatórios
-                            </h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+                        Relatórios
+                    </h1>
 
-                            <p className="mt-1 text-zinc-500">
-                                Resumo financeiro
-                                e desempenho das
-                                vendas
-                            </p>
-                        </div>
-                    </div>
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-500">
+                        Analise o desempenho
+                        financeiro e descubra
+                        quais produtos mais
+                        contribuem para as
+                        vendas.
+                    </p>
                 </div>
 
-                <div className="mb-8 flex flex-wrap gap-2">
+                <div className="mb-7 flex flex-wrap gap-2">
                     {PERIODOS.map(
                         (periodo) => (
                             <Link
@@ -270,10 +305,10 @@ export default async function RelatoriosPage({
                                     periodo.dias
                                 }
                                 href={`/dashboard/relatorios?dias=${periodo.dias}`}
-                                className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${dias ===
+                                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition ${dias ===
                                         periodo.dias
-                                        ? 'bg-pink-600 text-white'
-                                        : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+                                        ? 'bg-gradient-to-r from-pink-600 to-rose-500 text-white shadow-md shadow-pink-500/15'
+                                        : 'border border-zinc-200 bg-white text-zinc-600 shadow-sm hover:bg-zinc-50'
                                     }`}
                             >
                                 {
@@ -290,11 +325,13 @@ export default async function RelatoriosPage({
                         valor={formatarMoeda(
                             faturamento,
                         )}
+                        descricao="Receita no período"
                         icone={
                             <DollarSign
                                 size={22}
                             />
                         }
+                        destaque="verde"
                     />
 
                     <CardResumo
@@ -302,11 +339,13 @@ export default async function RelatoriosPage({
                         valor={formatarMoeda(
                             totalGastos,
                         )}
+                        descricao="Despesas no período"
                         icone={
                             <TrendingDown
                                 size={22}
                             />
                         }
+                        destaque="vermelho"
                     />
 
                     <CardResumo
@@ -314,17 +353,33 @@ export default async function RelatoriosPage({
                         valor={formatarMoeda(
                             resultado,
                         )}
+                        descricao={
+                            resultado >=
+                                0
+                                ? 'Saldo positivo'
+                                : 'Saldo negativo'
+                        }
                         icone={
                             resultado >=
                                 0 ? (
                                 <TrendingUp
-                                    size={22}
+                                    size={
+                                        22
+                                    }
                                 />
                             ) : (
                                 <TrendingDown
-                                    size={22}
+                                    size={
+                                        22
+                                    }
                                 />
                             )
+                        }
+                        destaque={
+                            resultado >=
+                                0
+                                ? 'verde'
+                                : 'vermelho'
                         }
                     />
 
@@ -333,11 +388,13 @@ export default async function RelatoriosPage({
                         valor={formatarNumero(
                             quantidadeVendas,
                         )}
+                        descricao="Vendas concluídas"
                         icone={
                             <ShoppingCart
                                 size={22}
                             />
                         }
+                        destaque="rosa"
                     />
 
                     <CardResumo
@@ -345,68 +402,62 @@ export default async function RelatoriosPage({
                         valor={formatarMoeda(
                             ticketMedio,
                         )}
+                        descricao="Média por venda"
                         icone={
                             <ReceiptText
                                 size={22}
                             />
                         }
+                        destaque="azul"
                     />
                 </section>
 
-                <section className="mt-6 grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-2xl bg-white p-5 shadow-sm">
-                        <p className="text-sm font-medium text-zinc-500">
-                            Unidades vendidas
-                        </p>
-
-                        <div className="mt-2 flex items-center gap-3">
+                <section className="mt-6 grid gap-4 sm:grid-cols-3">
+                    <InfoCard
+                        titulo="Unidades vendidas"
+                        valor={formatarNumero(
+                            unidadesVendidas,
+                        )}
+                        icone={
                             <Package
-                                size={25}
-                                className="text-pink-600"
+                                size={21}
                             />
+                        }
+                    />
 
-                            <p className="text-3xl font-bold text-zinc-900">
-                                {formatarNumero(
-                                    unidadesVendidas,
-                                )}
-                            </p>
-                        </div>
-                    </div>
+                    <InfoCard
+                        titulo="Período analisado"
+                        valor={`${dias} dias`}
+                        icone={
+                            <CalendarDays
+                                size={21}
+                            />
+                        }
+                    />
 
-                    <div className="rounded-2xl bg-white p-5 shadow-sm">
-                        <p className="text-sm font-medium text-zinc-500">
-                            Período analisado
-                        </p>
-
-                        <p className="mt-2 text-3xl font-bold text-zinc-900">
-                            {dias}
-                        </p>
-
-                        <p className="text-sm text-zinc-500">
-                            dias
-                        </p>
-                    </div>
+                    <InfoCard
+                        titulo="Margem do período"
+                        valor={`${margem.toFixed(
+                            1,
+                        )}%`}
+                        icone={
+                            <BarChart3
+                                size={21}
+                            />
+                        }
+                    />
                 </section>
 
                 <section className="mt-8 grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-2xl bg-white p-5 shadow-sm">
-                        <div className="mb-5">
-                            <h2 className="font-bold text-zinc-900">
-                                Produtos mais vendidos
-                            </h2>
-
-                            <p className="mt-1 text-sm text-zinc-500">
-                                Ranking por
-                                quantidade de
-                                unidades
-                            </p>
-                        </div>
-
+                    <RankingCard
+                        titulo="Produtos mais vendidos"
+                        descricao="Ranking por quantidade de unidades"
+                    >
                         {produtosMaisVendidos.length ===
                             0 ? (
                             <EstadoVazio />
                         ) : (
-                            <div className="space-y-3">
+                            <div className="mt-5 space-y-4">
                                 {produtosMaisVendidos
                                     .slice(
                                         0,
@@ -416,69 +467,76 @@ export default async function RelatoriosPage({
                                         (
                                             produto,
                                             index,
-                                        ) => (
-                                            <div
-                                                key={
-                                                    produto.nome
-                                                }
-                                                className="flex items-center justify-between gap-4 rounded-xl border border-zinc-100 p-4"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-50 text-sm font-bold text-pink-600">
-                                                        {index +
-                                                            1}
-                                                    </div>
+                                        ) => {
+                                            const percentual =
+                                                (produto.quantidade /
+                                                    maiorQuantidade) *
+                                                100;
 
-                                                    <div>
-                                                        <p className="font-medium text-zinc-900">
+                                            return (
+                                                <div
+                                                    key={
+                                                        produto.nome
+                                                    }
+                                                >
+                                                    <div className="flex items-center justify-between gap-4">
+                                                        <div className="flex min-w-0 items-center gap-3">
+                                                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-pink-50 text-sm font-bold text-pink-600">
+                                                                {index +
+                                                                    1}
+                                                            </div>
+
+                                                            <div className="min-w-0">
+                                                                <p className="truncate font-semibold text-zinc-900">
+                                                                    {
+                                                                        produto.nome
+                                                                    }
+                                                                </p>
+
+                                                                <p className="text-xs text-zinc-400">
+                                                                    {formatarMoeda(
+                                                                        produto.faturamento,
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <p className="shrink-0 font-bold text-zinc-900">
                                                             {
-                                                                produto.nome
+                                                                produto.quantidade
                                                             }
-                                                        </p>
 
-                                                        <p className="text-sm text-zinc-500">
-                                                            {formatarMoeda(
-                                                                produto.faturamento,
-                                                            )}
+                                                            <span className="ml-1 text-xs font-medium text-zinc-400">
+                                                                un.
+                                                            </span>
                                                         </p>
                                                     </div>
-                                                </div>
 
-                                                <div className="text-right">
-                                                    <p className="font-bold text-zinc-900">
-                                                        {
-                                                            produto.quantidade
-                                                        }
-                                                    </p>
-
-                                                    <p className="text-xs text-zinc-500">
-                                                        unidades
-                                                    </p>
+                                                    <div className="ml-12 mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                                                        <div
+                                                            className="h-full rounded-full bg-gradient-to-r from-pink-600 to-rose-400"
+                                                            style={{
+                                                                width: `${percentual}%`,
+                                                            }}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ),
+                                            );
+                                        },
                                     )}
                             </div>
                         )}
-                    </div>
+                    </RankingCard>
 
-                    <div className="rounded-2xl bg-white p-5 shadow-sm">
-                        <div className="mb-5">
-                            <h2 className="font-bold text-zinc-900">
-                                Maior faturamento
-                            </h2>
-
-                            <p className="mt-1 text-sm text-zinc-500">
-                                Produtos que mais
-                                geraram receita
-                            </p>
-                        </div>
-
+                    <RankingCard
+                        titulo="Maior faturamento"
+                        descricao="Produtos que mais geraram receita"
+                    >
                         {produtosMaiorFaturamento.length ===
                             0 ? (
                             <EstadoVazio />
                         ) : (
-                            <div className="space-y-3">
+                            <div className="mt-5 space-y-4">
                                 {produtosMaiorFaturamento
                                     .slice(
                                         0,
@@ -488,77 +546,144 @@ export default async function RelatoriosPage({
                                         (
                                             produto,
                                             index,
-                                        ) => (
-                                            <div
-                                                key={
-                                                    produto.nome
-                                                }
-                                                className="flex items-center justify-between gap-4 rounded-xl border border-zinc-100 p-4"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-50 text-sm font-bold text-pink-600">
-                                                        {index +
-                                                            1}
+                                        ) => {
+                                            const percentual =
+                                                (produto.faturamento /
+                                                    maiorFaturamento) *
+                                                100;
+
+                                            return (
+                                                <div
+                                                    key={
+                                                        produto.nome
+                                                    }
+                                                >
+                                                    <div className="flex items-center justify-between gap-4">
+                                                        <div className="flex min-w-0 items-center gap-3">
+                                                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-bold text-emerald-600">
+                                                                {index +
+                                                                    1}
+                                                            </div>
+
+                                                            <div className="min-w-0">
+                                                                <p className="truncate font-semibold text-zinc-900">
+                                                                    {
+                                                                        produto.nome
+                                                                    }
+                                                                </p>
+
+                                                                <p className="text-xs text-zinc-400">
+                                                                    {
+                                                                        produto.quantidade
+                                                                    }{' '}
+                                                                    unidades
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <p className="shrink-0 font-bold text-zinc-900">
+                                                            {formatarMoeda(
+                                                                produto.faturamento,
+                                                            )}
+                                                        </p>
                                                     </div>
 
-                                                    <div>
-                                                        <p className="font-medium text-zinc-900">
-                                                            {
-                                                                produto.nome
-                                                            }
-                                                        </p>
-
-                                                        <p className="text-sm text-zinc-500">
-                                                            {
-                                                                produto.quantidade
-                                                            }{' '}
-                                                            unidades
-                                                        </p>
+                                                    <div className="ml-12 mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                                                        <div
+                                                            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
+                                                            style={{
+                                                                width: `${percentual}%`,
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
-
-                                                <p className="font-bold text-zinc-900">
-                                                    {formatarMoeda(
-                                                        produto.faturamento,
-                                                    )}
-                                                </p>
-                                            </div>
-                                        ),
+                                            );
+                                        },
                                     )}
                             </div>
                         )}
-                    </div>
+                    </RankingCard>
                 </section>
             </div>
         </main>
     );
 }
 
+type Destaque =
+    | 'verde'
+    | 'vermelho'
+    | 'rosa'
+    | 'azul';
+
 interface CardResumoProps {
     titulo: string;
     valor: string;
-    icone: React.ReactNode;
+    descricao: string;
+    icone: ReactNode;
+    destaque: Destaque;
 }
 
 function CardResumo({
     titulo,
     valor,
+    descricao,
     icone,
+    destaque,
 }: CardResumoProps) {
+    const estilos = {
+        verde: {
+            detalhe:
+                'bg-emerald-500',
+            icone:
+                'bg-emerald-50 text-emerald-600',
+        },
+
+        vermelho: {
+            detalhe:
+                'bg-red-500',
+            icone:
+                'bg-red-50 text-red-500',
+        },
+
+        rosa: {
+            detalhe:
+                'bg-pink-500',
+            icone:
+                'bg-pink-50 text-pink-600',
+        },
+
+        azul: {
+            detalhe:
+                'bg-sky-500',
+            icone:
+                'bg-sky-50 text-sky-600',
+        },
+    };
+
     return (
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
-            <div className="flex items-start justify-between gap-4">
-                <div>
+        <div className="relative overflow-hidden rounded-3xl border border-zinc-200/70 bg-white p-5 shadow-sm">
+            <div
+                className={`absolute inset-x-0 top-0 h-1 ${estilos[destaque].detalhe}`}
+            />
+
+            <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
                     <p className="text-sm font-medium text-zinc-500">
                         {titulo}
                     </p>
 
-                    <p className="mt-2 text-2xl font-bold text-zinc-900">
+                    <p className="mt-2 break-words text-2xl font-bold tracking-tight text-zinc-900">
                         {valor}
+                    </p>
+
+                    <p className="mt-1 text-xs text-zinc-400">
+                        {descricao}
                     </p>
                 </div>
 
-                <div className="rounded-xl bg-pink-50 p-3 text-pink-600">
+                <div
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${estilos[destaque].icone}`}
+                >
                     {icone}
                 </div>
             </div>
@@ -566,21 +691,76 @@ function CardResumo({
     );
 }
 
+interface InfoCardProps {
+    titulo: string;
+    valor: string;
+    icone: ReactNode;
+}
+
+function InfoCard({
+    titulo,
+    valor,
+    icone,
+}: InfoCardProps) {
+    return (
+        <div className="flex items-center gap-4 rounded-2xl border border-zinc-200/70 bg-white p-5 shadow-sm">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink-50 text-pink-600">
+                {icone}
+            </div>
+
+            <div>
+                <p className="text-xs font-medium text-zinc-400">
+                    {titulo}
+                </p>
+
+                <p className="mt-1 text-xl font-bold text-zinc-900">
+                    {valor}
+                </p>
+            </div>
+        </div>
+    );
+}
+
+interface RankingCardProps {
+    titulo: string;
+    descricao: string;
+    children: ReactNode;
+}
+
+function RankingCard({
+    titulo,
+    descricao,
+    children,
+}: RankingCardProps) {
+    return (
+        <div className="rounded-3xl border border-zinc-200/70 bg-white p-5 shadow-sm sm:p-6">
+            <h2 className="text-lg font-bold text-zinc-900">
+                {titulo}
+            </h2>
+
+            <p className="mt-1 text-sm text-zinc-500">
+                {descricao}
+            </p>
+
+            {children}
+        </div>
+    );
+}
+
 function EstadoVazio() {
     return (
-        <div className="rounded-xl bg-zinc-50 p-8 text-center">
-            <Package
-                size={36}
-                className="mx-auto text-zinc-300"
-            />
+        <div className="mt-5 rounded-2xl bg-zinc-50 p-8 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-zinc-300 shadow-sm">
+                <Package size={28} />
+            </div>
 
-            <p className="mt-3 font-medium text-zinc-700">
+            <p className="mt-4 font-semibold text-zinc-700">
                 Nenhuma venda no período
             </p>
 
             <p className="mt-1 text-sm text-zinc-500">
                 Registre vendas para gerar
-                os relatórios.
+                dados neste relatório.
             </p>
         </div>
     );
