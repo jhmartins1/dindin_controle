@@ -384,7 +384,7 @@ export default async function DashboardPage() {
 
                     <Link
                         href="/dashboard/vendas/nova"
-                        className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-5 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
+                        className="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-600 to-rose-500 px-5 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
                     >
                         <ShoppingCart
                             size={19}
@@ -574,7 +574,7 @@ export default async function DashboardPage() {
                                                 title={`Faturamento: ${formatarMoeda(
                                                     dia.faturamento,
                                                 )}`}
-                                                className="w-full max-w-7 rounded-t-lg bg-gradient-to-t from-pink-600 to-rose-400 transition hover:opacity-80"
+                                                className="w-full max-w-7 rounded-t-lg bg-linear-to-t from-pink-600 to-rose-400 transition hover:opacity-80"
                                                 style={{
                                                     height: `${alturaFaturamento}%`,
                                                 }}
@@ -605,7 +605,7 @@ export default async function DashboardPage() {
 
                 {produtosEstoqueBaixo.length >
                     0 && (
-                        <section className="mt-6 overflow-hidden rounded-3xl border border-amber-200/80 bg-gradient-to-r from-amber-50 to-orange-50 p-5 shadow-sm sm:p-6">
+                        <section className="mt-6 overflow-hidden rounded-3xl border border-amber-200/80 bg-linear-to-r from-amber-50 to-orange-50 p-5 shadow-sm sm:p-6">
                             <div className="flex items-start gap-4">
                                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
                                     <AlertTriangle
@@ -806,21 +806,21 @@ export default async function DashboardPage() {
                                                 <div className="flex items-center gap-3">
                                                     <div
                                                         className={`h-2.5 w-2.5 rounded-full ${produto.estoque <=
-                                                                5
-                                                                ? 'bg-red-500'
-                                                                : produto.estoque <=
-                                                                    10
-                                                                    ? 'bg-amber-400'
-                                                                    : 'bg-emerald-500'
+                                                            5
+                                                            ? 'bg-red-500'
+                                                            : produto.estoque <=
+                                                                10
+                                                                ? 'bg-amber-400'
+                                                                : 'bg-emerald-500'
                                                             }`}
                                                     />
 
                                                     <div className="text-right">
                                                         <p
                                                             className={`font-bold ${produto.estoque <=
-                                                                    5
-                                                                    ? 'text-red-600'
-                                                                    : 'text-zinc-900'
+                                                                5
+                                                                ? 'text-red-600'
+                                                                : 'text-zinc-900'
                                                                 }`}
                                                         >
                                                             {
@@ -908,7 +908,7 @@ function CardResumo({
                         {titulo}
                     </p>
 
-                    <p className="mt-2 break-words text-2xl font-bold tracking-tight text-zinc-900">
+                    <p className="mt-2 wrap-break-word text-2xl font-bold tracking-tight text-zinc-900">
                         {valor}
                     </p>
 

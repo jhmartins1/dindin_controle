@@ -39,7 +39,7 @@ export default async function DashboardLayout({
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-pink-50/40">
+        <div className="min-h-screen bg-linear-to-br from-zinc-50 via-white to-pink-50/40">
             <DashboardNav />
 
             {children}

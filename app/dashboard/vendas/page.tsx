@@ -144,7 +144,7 @@ export default async function VendasPage() {
 
                     <Link
                         href="/dashboard/vendas/nova"
-                        className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-5 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
+                        className="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-600 to-rose-500 px-5 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
                     >
                         <Plus size={19} />
 
@@ -264,14 +264,14 @@ export default async function VendasPage() {
                                                 venda.id
                                             }
                                             className={`relative overflow-hidden rounded-3xl border bg-white p-5 shadow-sm transition sm:p-6 ${venda.cancelada
-                                                    ? 'border-red-100 opacity-70'
-                                                    : 'border-zinc-200/70 hover:-translate-y-0.5 hover:shadow-md'
+                                                ? 'border-red-100 opacity-70'
+                                                : 'border-zinc-200/70 hover:-translate-y-0.5 hover:shadow-md'
                                                 }`}
                                         >
                                             <div
                                                 className={`absolute inset-x-0 top-0 h-1 ${venda.cancelada
-                                                        ? 'bg-red-400'
-                                                        : 'bg-gradient-to-r from-pink-500 to-rose-400'
+                                                    ? 'bg-red-400'
+                                                    : 'bg-linear-to-r from-pink-500 to-rose-400'
                                                     }`}
                                             />
 
@@ -329,8 +329,8 @@ export default async function VendasPage() {
                                                 <div className="sm:text-right">
                                                     <p
                                                         className={`text-2xl font-bold tracking-tight ${venda.cancelada
-                                                                ? 'text-zinc-400 line-through'
-                                                                : 'text-zinc-900'
+                                                            ? 'text-zinc-400 line-through'
+                                                            : 'text-zinc-900'
                                                             }`}
                                                     >
                                                         {formatarMoeda(
@@ -484,7 +484,7 @@ function CardResumo({
                         {titulo}
                     </p>
 
-                    <p className="mt-2 break-words text-2xl font-bold tracking-tight text-zinc-900">
+                    <p className="mt-2 wrap-break-word text-2xl font-bold tracking-tight text-zinc-900">
                         {valor}
                     </p>
 

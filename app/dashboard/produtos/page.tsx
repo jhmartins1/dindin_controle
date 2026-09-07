@@ -91,7 +91,7 @@ export default async function ProdutosPage() {
 
                     <Link
                         href="/dashboard/produtos/novo"
-                        className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-5 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
+                        className="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-600 to-rose-500 px-5 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
                     >
                         <PackagePlus
                             size={19}
@@ -158,7 +158,7 @@ export default async function ProdutosPage() {
 
                 {semEstoque.length >
                     0 && (
-                        <section className="mb-7 rounded-3xl border border-red-200/80 bg-gradient-to-r from-red-50 to-rose-50 p-5 shadow-sm">
+                        <section className="mb-7 rounded-3xl border border-red-200/80 bg-linear-to-r from-red-50 to-rose-50 p-5 shadow-sm">
                             <div className="flex items-start gap-4">
                                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-600">
                                     <AlertTriangle
@@ -314,18 +314,18 @@ function ProdutoCard({
     return (
         <article
             className={`group relative overflow-hidden rounded-3xl border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${produto.ativo
-                    ? 'border-zinc-200/70'
-                    : 'border-zinc-200 opacity-70'
+                ? 'border-zinc-200/70'
+                : 'border-zinc-200 opacity-70'
                 }`}
         >
             <div
                 className={`absolute inset-x-0 top-0 h-1 ${produto.ativo
-                        ? semEstoque
-                            ? 'bg-red-500'
-                            : estoqueBaixo
-                                ? 'bg-amber-400'
-                                : 'bg-emerald-500'
-                        : 'bg-zinc-300'
+                    ? semEstoque
+                        ? 'bg-red-500'
+                        : estoqueBaixo
+                            ? 'bg-amber-400'
+                            : 'bg-emerald-500'
+                    : 'bg-zinc-300'
                     }`}
             />
 
@@ -387,8 +387,8 @@ function ProdutoCard({
                 <div className="mt-2 flex items-baseline gap-1.5">
                     <p
                         className={`text-3xl font-bold tracking-tight ${semEstoque
-                                ? 'text-red-600'
-                                : 'text-zinc-900'
+                            ? 'text-red-600'
+                            : 'text-zinc-900'
                             }`}
                     >
                         {produto.estoque}

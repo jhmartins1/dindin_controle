@@ -87,14 +87,14 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-rose-50 via-pink-50 to-zinc-100 px-4 py-10">
+        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-rose-50 via-pink-50 to-zinc-100 px-4 py-10">
             <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-pink-300/20 blur-3xl" />
 
             <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-rose-300/20 blur-3xl" />
 
             <div className="relative w-full max-w-md">
                 <div className="mb-6 text-center">
-                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-pink-500 to-rose-500 shadow-lg shadow-pink-500/20">
+                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-linear-to-br from-pink-500 to-rose-500 shadow-lg shadow-pink-500/20">
                         <IceCreamBowl
                             size={38}
                             strokeWidth={2}
@@ -261,7 +261,7 @@ export default function LoginPage() {
                             disabled={
                                 carregando
                             }
-                            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-4 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-pink-500/25 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60"
+                            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-600 to-rose-500 px-4 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-pink-500/25 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60"
                         >
                             {carregando && (
                                 <LoaderCircle

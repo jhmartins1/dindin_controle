@@ -306,9 +306,9 @@ export default async function RelatoriosPage({
                                 }
                                 href={`/dashboard/relatorios?dias=${periodo.dias}`}
                                 className={`rounded-xl px-4 py-2.5 text-sm font-bold transition ${dias ===
-                                        periodo.dias
-                                        ? 'bg-gradient-to-r from-pink-600 to-rose-500 text-white shadow-md shadow-pink-500/15'
-                                        : 'border border-zinc-200 bg-white text-zinc-600 shadow-sm hover:bg-zinc-50'
+                                    periodo.dias
+                                    ? 'bg-linear-to-r from-pink-600 to-rose-500 text-white shadow-md shadow-pink-500/15'
+                                    : 'border border-zinc-200 bg-white text-zinc-600 shadow-sm hover:bg-zinc-50'
                                     }`}
                             >
                                 {
@@ -514,7 +514,7 @@ export default async function RelatoriosPage({
 
                                                     <div className="ml-12 mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
                                                         <div
-                                                            className="h-full rounded-full bg-gradient-to-r from-pink-600 to-rose-400"
+                                                            className="h-full rounded-full bg-linear-to-r from-pink-600 to-rose-400"
                                                             style={{
                                                                 width: `${percentual}%`,
                                                             }}
@@ -590,7 +590,7 @@ export default async function RelatoriosPage({
 
                                                     <div className="ml-12 mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
                                                         <div
-                                                            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
+                                                            className="h-full rounded-full bg-linear-to-r from-emerald-500 to-emerald-400"
                                                             style={{
                                                                 width: `${percentual}%`,
                                                             }}
@@ -672,7 +672,7 @@ function CardResumo({
                         {titulo}
                     </p>
 
-                    <p className="mt-2 break-words text-2xl font-bold tracking-tight text-zinc-900">
+                    <p className="mt-2 wrap-break-word text-2xl font-bold tracking-tight text-zinc-900">
                         {valor}
                     </p>
 

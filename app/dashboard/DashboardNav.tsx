@@ -54,14 +54,14 @@ export function DashboardNav() {
     }
 
     return (
-        <header className="sticky top-0 z-40 border-b border-zinc-200/70 bg-white/90 shadow-sm shadow-zinc-900/[0.02] backdrop-blur-xl">
+        <header className="sticky top-0 z-40 border-b border-zinc-200/70 bg-white/90 shadow-sm shadow-zinc-900/2 backdrop-blur-xl">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
                 <div className="flex min-h-20 items-center justify-between gap-4">
                     <Link
                         href="/dashboard"
                         className="group flex min-w-0 items-center gap-3"
                     >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/20 transition group-hover:scale-105">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/20 transition group-hover:scale-105">
                             <IceCreamBowl
                                 size={23}
                                 strokeWidth={2.2}
@@ -95,8 +95,8 @@ export function DashboardNav() {
                                 key={link.href}
                                 href={link.href}
                                 className={`relative flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${ativo
-                                        ? 'bg-pink-50 text-pink-600'
-                                        : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
+                                    ? 'bg-pink-50 text-pink-600'
+                                    : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
                                     }`}
                             >
                                 <Icon

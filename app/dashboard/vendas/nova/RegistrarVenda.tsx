@@ -333,12 +333,12 @@ export function RegistrarVenda({
                                                     produto.id
                                                 }
                                                 className={`relative overflow-hidden rounded-3xl border bg-white p-5 shadow-sm transition ${selecionado
-                                                        ? 'border-pink-300 ring-2 ring-pink-100'
-                                                        : 'border-zinc-200/70 hover:-translate-y-0.5 hover:shadow-md'
+                                                    ? 'border-pink-300 ring-2 ring-pink-100'
+                                                    : 'border-zinc-200/70 hover:-translate-y-0.5 hover:shadow-md'
                                                     }`}
                                             >
                                                 {selecionado && (
-                                                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-pink-600 to-rose-400" />
+                                                    <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-pink-600 to-rose-400" />
                                                 )}
 
                                                 <div className="flex items-start justify-between gap-3">
@@ -358,9 +358,9 @@ export function RegistrarVenda({
 
                                                     <span
                                                         className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-bold ${produto.estoque <=
-                                                                5
-                                                                ? 'bg-amber-50 text-amber-700'
-                                                                : 'bg-emerald-50 text-emerald-700'
+                                                            5
+                                                            ? 'bg-amber-50 text-amber-700'
+                                                            : 'bg-emerald-50 text-emerald-700'
                                                             }`}
                                                     >
                                                         {
@@ -434,7 +434,7 @@ export function RegistrarVenda({
                     </section>
 
                     <aside>
-                        <div className="rounded-3xl border border-zinc-200/70 bg-white p-5 shadow-lg shadow-zinc-900/[0.04] sm:p-6 lg:sticky lg:top-40">
+                        <div className="rounded-3xl border border-zinc-200/70 bg-white p-5 shadow-lg shadow-zinc-900/4 sm:p-6 lg:sticky lg:top-40">
                             <div className="flex items-center gap-3">
                                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-50 text-pink-600">
                                     <ShoppingBag
@@ -590,7 +590,7 @@ export function RegistrarVenda({
 
                             <div className="my-6 h-px bg-zinc-100" />
 
-                            <div className="rounded-2xl bg-gradient-to-br from-pink-50 to-rose-50 p-4">
+                            <div className="rounded-2xl bg-linear-to-br from-pink-50 to-rose-50 p-4">
                                 <div className="flex items-end justify-between gap-4">
                                     <div>
                                         <p className="text-xs font-semibold uppercase tracking-wide text-pink-500">
@@ -632,7 +632,7 @@ export function RegistrarVenda({
                                     itensSelecionados.length ===
                                     0
                                 }
-                                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-4 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-50"
+                                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-600 to-rose-500 px-4 py-3.5 font-semibold text-white shadow-lg shadow-pink-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-50"
                             >
                                 {salvando ? (
                                     <LoaderCircle
@@ -679,8 +679,8 @@ function PagamentoButton({
             type="button"
             onClick={onClick}
             className={`flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl border px-2 py-3 text-xs font-bold transition ${ativo
-                    ? 'border-pink-300 bg-pink-50 text-pink-600 ring-2 ring-pink-100'
-                    : 'border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50'
+                ? 'border-pink-300 bg-pink-50 text-pink-600 ring-2 ring-pink-100'
+                : 'border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50'
                 }`}
         >
             {icone}
