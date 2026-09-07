@@ -71,7 +71,7 @@ export function DashboardNav() {
                         <div className="min-w-0">
                             <div className="flex items-center gap-2">
                                 <h1 className="truncate text-lg font-bold tracking-tight text-zinc-900">
-                                    Dindin Controle
+                                    Dindin Gourmet
                                 </h1>
                             </div>
 

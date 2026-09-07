@@ -103,7 +103,7 @@ export default function LoginPage() {
                     </div>
 
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
-                        Dindin Controle
+                        Dindin Gourmet
                     </h1>
 
                     <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-zinc-500">
@@ -277,9 +277,23 @@ export default function LoginPage() {
                     </form>
                 </div>
 
-                <p className="mt-5 text-center text-xs text-zinc-400">
-                    Sistema de controle interno
-                </p>
+                <div className="mt-5 text-center">
+                    <p className="text-xs text-zinc-400">
+                        Sistema de controle interno
+                    </p>
+
+                    <p className="mt-1 text-xs text-zinc-400">
+                        Made by:{' '}
+                        <a
+                            href="https://www.instagram.com/jh.martins1/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-semibold text-pink-500 transition hover:text-pink-600 hover:underline"
+                        >
+                            0xJHM
+                        </a>
+                    </p>
+                </div>
             </div>
         </main>
     );

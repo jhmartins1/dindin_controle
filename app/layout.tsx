@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Dindin Controle',
+  title: 'Dindin Gourmet',
   description:
     'Sistema de controle de vendas, estoque e gastos',
 };
