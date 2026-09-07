@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id    Int    @id @default(autoincrement())
+  login String @unique
+  senha String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Produto {
+  id      Int     @id @default(autoincrement())
+  nome    String
+  preco   Decimal @db.Decimal(10, 2)
+  estoque Int     @default(0)
+  ativo   Boolean @default(true)
+
+  itensVenda ItemVenda[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Venda {
+  id             Int            @id @default(autoincrement())
+  total          Decimal        @db.Decimal(10, 2)
+  formaPagamento FormaPagamento
+
+  itens ItemVenda[]
+
+  createdAt DateTime @default(now())
+}
+
+model ItemVenda {
+  id            Int     @id @default(autoincrement())
+  quantidade    Int
+  precoUnitario Decimal @db.Decimal(10, 2)
+
+  vendaId Int
+  venda   Venda @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+
+  produtoId Int
+  produto   Produto @relation(fields: [produtoId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Gasto {
+  id        Int            @id @default(autoincrement())
+  descricao String
+  valor     Decimal        @db.Decimal(10, 2)
+  categoria CategoriaGasto
+
+  createdAt DateTime @default(now())
+}
+
+enum FormaPagamento {
+  PIX
+  DINHEIRO
+  CARTAO
+}
+
+enum CategoriaGasto {
+  INGREDIENTES
+  EMBALAGENS
+  TRANSPORTE
+  OUTROS
+}
