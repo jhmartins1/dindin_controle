@@ -231,10 +231,8 @@ Instagram: [@jh.martins1](https://www.instagram.com/jh.martins1/)
 
 ------------------------------------------------------------------------
 
-```{=html}
+
 <p align="center">
-```
-Feito com 💗 para facilitar o controle do Dindin Gourmet.
-```{=html}
+  Feito com 💗 para facilitar o controle do Dindin Gourmet.
 </p>
-```
+
